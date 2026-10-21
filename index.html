@@ -157,8 +157,8 @@
 <div class="container">
 
 <header>
-  <h1>🛠️ XD-Tools Ultimate Guide (Fixed)</h1>
-  <p>ZeroVPN - Full Setup, Auto-Delete Bot & Background Service</p>
+  <h1>🛠️ XD-Tools Ultimate Guide (Multi-User)</h1>
+  <p>ZeroVPN - Full Setup, Bot Commands & Multi-Account Support</p>
 </header>
 
 <div class="warning">
@@ -174,9 +174,9 @@
     <li><a href="#step3">Folder ဆောက်ခြင်း & Venv</a></li>
     <li><a href="#step4">Library များ Install လုပ်ခြင်း</a></li>
     <li><a href="#step5">XD-Tools.py ကုဒ် (အပြည့်အစုံ)</a></li>
-    <li><a href="#step6">Interactive Bot ကုဒ် (Auto-Delete ပါဝင်)</a></li>
-    <li><a href="#step7">Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း</a></li>
-    <li><a href="#step8">အဆင့်မြင့် Commands များ</a></li>
+    <li><a href="#step6">Interactive Bot ကုဒ် (Multi-User ပါဝင်)</a></li>
+    <li><a href="#step7">BotFather တွင် Commands သတ်မှတ်ခြင်း</a></li>
+    <li><a href="#step8">Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း</a></li>
   </ol>
 </div>
 
@@ -401,7 +401,7 @@ if __name__ == _qaaa7b7([22, 22, 36, 40, 32, 39, 22, 22]):
 </div>
 
 <!-- ==================== STEP 6 ==================== -->
-<h2 id="step6">အဆင့် ၆ — Interactive Bot ကုဒ် (Auto-Delete ပါဝင်)</h2>
+<h2 id="step6">အဆင့် ၆ — Interactive Bot ကုဒ် (Multi-User ပါဝင်)</h2>
 <div class="step">
   <span class="step-num">1</span><strong>Bot Script ဖိုင်ဖွင့်ပါ</strong>
   <div class="code-block">
@@ -411,7 +411,10 @@ if __name__ == _qaaa7b7([22, 22, 36, 40, 32, 39, 22, 22]):
     </div>
     <pre>nano /opt/xd-test/bot.py</pre>
   </div>
-  <div class="info">အောက်က ကုဒ်ကို Copy ကူးပြီး Paste လုပ်ပါ။ (ညီလေး Token & ID ထည့်ပြီးသား)။ ပြီးရင် <b>Ctrl+O</b> → <b>Enter</b> → <b>Ctrl+X</b> နှိပ်ပါ။</div>
+  <div class="info">
+    အောက်က ကုဒ်ကို Copy ကူးပြီး Paste လုပ်ပါ။ <br>
+    <b>ALLOWED_USERS</b> ဆိုတဲ့ နေရာမှာ ညီလေး သုံးချင်တဲ့ Telegram Account ID တွေကို ထည့်ပါ။ (ဥပမာ - `[7576434717, 123456789, 987654321]`)။ 
+  </div>
   
   <div class="code-block">
     <div class="code-header">
@@ -423,7 +426,13 @@ import os, sys, zipfile, subprocess, requests, time
 
 # ===== ညီလေး အချက်အလက် =====
 BOT_TOKEN = "8764708526:AAEn-tq7zy1AUdGn8USzl8Eh6ssc6YlY4eU"
-CHAT_ID   = "7576434717"
+
+# ဒီနေရာမှာ ညီလေး သုံးချင်တဲ့ အကောင့်တွေရဲ့ ID တွေကို ထည့်ပါ (ကော်မာ ခြားပြီး)
+ALLOWED_USERS = [
+    7576434717,   # မူလ အကောင့် (မောင်သုည)
+    # 123456789,  # ဒီနေရာမှာ နောက်အကောင့် ID ထည့်ပါ
+    # 987654321,  # နောက်ထပ် အကောင့် ID
+]
 # ==============================
 
 WORK_DIR = "/opt/xd-test"
@@ -442,19 +451,19 @@ def tg_api(method, data=None, files=None):
         print(f"[!] API Error: {e}", file=sys.stderr)
         return {"ok": False}
 
-def send_message(text):
-    res = tg_api("sendMessage", data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"})
+def send_message(chat_id, text):
+    res = tg_api("sendMessage", data={"chat_id": chat_id, "text": text, "parse_mode": "HTML"})
     if res.get("ok"):
         return res["result"]["message_id"]
     return None
 
-def delete_message(msg_id):
+def delete_message(chat_id, msg_id):
     if msg_id:
-        tg_api("deleteMessage", data={"chat_id": CHAT_ID, "message_id": msg_id})
+        tg_api("deleteMessage", data={"chat_id": chat_id, "message_id": msg_id})
 
-def send_document(path, caption=""):
+def send_document(chat_id, path, caption=""):
     with open(path, "rb") as f:
-        tg_api("sendDocument", data={"chat_id": CHAT_ID, "caption": caption}, files={"document": f})
+        tg_api("sendDocument", data={"chat_id": chat_id, "caption": caption}, files={"document": f})
 
 def get_names():
     res = subprocess.run([PYTHON, TOOL, "--list"], capture_output=True, text=True)
@@ -466,8 +475,8 @@ def get_names():
         names.append(line)
     return names
 
-def do_zip():
-    wait_id = send_message("⏳ <b>Downloading all configs to ZIP...</b>\nPlease wait...")
+def do_zip(chat_id):
+    wait_id = send_message(chat_id, "⏳ <b>Downloading all configs to ZIP...</b>\nPlease wait...")
     names = get_names()
     os.makedirs(OUT_DIR, exist_ok=True)
     for f in os.listdir(OUT_DIR): os.remove(os.path.join(OUT_DIR, f))
@@ -483,12 +492,12 @@ def do_zip():
                 full = os.path.join(root, fn)
                 zf.write(full, os.path.relpath(full, OUT_DIR))
     
-    delete_message(wait_id) # စောင့်ဆိုင်းစာသား ဖျက်မယ်
+    delete_message(chat_id, wait_id)
     
     size_mb = os.path.getsize(ZIP_PATH) / (1024 * 1024)
     caption = f"✅ <b>VPN Configs ZIP</b>\n📦 {ok} ok, {fail} failed\n💾 {size_mb:.2f} MB"
     if size_mb > 50:
-        send_message("⚠️ ZIP > 50MB, splitting...")
+        send_message(chat_id, "⚠️ ZIP > 50MB, splitting...")
         part_size = 45 * 1024 * 1024
         with open(ZIP_PATH, "rb") as f:
             idx = 1
@@ -497,37 +506,37 @@ def do_zip():
                 if not chunk: break
                 pp = f"{ZIP_PATH}.part{idx:02d}"
                 with open(pp, "wb") as pf: pf.write(chunk)
-                send_document(pp, f"Part {idx}\n{caption}")
+                send_document(chat_id, pp, f"Part {idx}\n{caption}")
                 os.remove(pp)
                 idx += 1
     else:
-        send_document(ZIP_PATH, caption)
-        send_message("✅ <b>Done!</b>")
+        send_document(chat_id, ZIP_PATH, caption)
+        send_message(chat_id, "✅ <b>Done!</b>")
 
-def get_single(name):
-    wait_id = send_message(f"⏳ <b>Fetching:</b> {name}...")
+def get_single(chat_id, name):
+    wait_id = send_message(chat_id, f"⏳ <b>Fetching:</b> {name}...")
     os.makedirs(OUT_DIR, exist_ok=True)
     r = subprocess.run([PYTHON, TOOL, "--name", name, "--out", OUT_DIR], capture_output=True, text=True)
     
-    delete_message(wait_id) # စောင့်ဆိုင်းစာသား ဖျက်မယ်
+    delete_message(chat_id, wait_id)
     
     if r.returncode != 0:
-        send_message(f"❌ Failed: {r.stderr[:200]}")
+        send_message(chat_id, f"❌ Failed: {r.stderr[:200]}")
         return
     files = os.listdir(OUT_DIR)
     if not files:
-        send_message("❌ Config file not created.")
+        send_message(chat_id, "❌ Config file not created.")
         return
     latest = max([os.path.join(OUT_DIR, f) for f in files], key=os.path.getctime)
     ext = os.path.splitext(latest)[1]
     new_path = os.path.join(WORK_DIR, f"{name}{ext}")
     os.rename(latest, new_path)
-    send_document(new_path, f"✅ {name}")
+    send_document(chat_id, new_path, f"✅ {name}")
     os.remove(new_path)
 
 def main():
     global OFFSET
-    send_message("🚀 <b>XD-Tools Bot is Online!</b>\nType /help to see commands.")
+    print("[*] Bot Started!")
     while True:
         try:
             res = tg_api("getUpdates", data={"offset": OFFSET, "timeout": 30})
@@ -536,35 +545,45 @@ def main():
                     OFFSET = update["update_id"] + 1
                     if "message" not in update or "text" not in update["message"]: continue
                     msg = update["message"]["text"].strip()
-                    chat_id = str(update["message"]["chat"]["id"])
-                    if chat_id != CHAT_ID: continue
+                    chat_id = update["message"]["chat"]["id"]
+                    
+                    # ခွင့်ပြုထားတဲ့ အကောင့် ဟုတ်မဟုတ် စစ်ဆေးခြင်း
+                    if int(chat_id) not in ALLOWED_USERS: 
+                        print(f"[!] Unauthorized access attempt by ID: {chat_id}")
+                        continue
+                        
                     if msg in ["/start", "/help"]:
                         help_txt = (
                             "🤖 <b>XD-Tools Commands</b>\n\n"
-                            "📋 /list - Config နာမည်အားလုံး ကြည့်ရန်\n"
-                            "📦 /zip - အားလုံးကို ZIP ဖိုင်နဲ့ ရယူရန်\n"
-                            "📄 /get &lt;name&gt; - Config တစ်ခုချင်း ရယူရန်\n"
-                            "🔍 /check - လက်ရှိ run နေတဲ့ အနေအထား\n\n"
+                            "📋 /list - View all config names\n"
+                            "📦 /zip - Get all configs as a ZIP file\n"
+                            "📄 /get &lt;name&gt; - Get a single config (e.g., /get SIAM VPN)\n"
+                            "🔍 /check - Check if bot is online\n\n"
                             "Example:\n/get SIAM VPN"
                         )
-                        send_message(help_txt)
+                        send_message(chat_id, help_txt)
                     elif msg == "/list":
-                        wait_id = send_message("⏳ Fetching list...")
+                        wait_id = send_message(chat_id, "⏳ Fetching list...")
                         names = get_names()
-                        delete_message(wait_id)
+                        delete_message(chat_id, wait_id)
                         if not names: 
-                            send_message("❌ No configs found.")
+                            send_message(chat_id, "❌ No configs found.")
                         else:
                             text = "📋 <b>Available Configs:</b>\n" + "\n".join([f"• {n}" for n in names])
                             if len(text) > 4000: text = text[:4000] + "\n\n... (truncated)"
-                            send_message(text)
-                    elif msg == "/zip": do_zip()
+                            send_message(chat_id, text)
+                    elif msg == "/zip": 
+                        do_zip(chat_id)
                     elif msg.startswith("/get"):
                         parts = msg.split(" ", 1)
-                        if len(parts) < 2: send_message("⚠️ Usage: <code>/get SIAM VPN</code>")
-                        else: get_single(parts[1].strip())
-                    elif msg == "/check": send_message("✅ Bot is running perfectly in the background.")
-                    else: send_message("❓ Unknown command. Type /help")
+                        if len(parts) < 2: 
+                            send_message(chat_id, "⚠️ Usage: <code>/get SIAM VPN</code>")
+                        else: 
+                            get_single(chat_id, parts[1].strip())
+                    elif msg == "/check": 
+                        send_message(chat_id, "✅ Bot is running perfectly in the background.")
+                    else: 
+                        send_message(chat_id, "❓ Unknown command. Type /help")
         except Exception as e:
             print(f"[!] Loop Error: {e}", file=sys.stderr)
             time.sleep(3)
@@ -576,7 +595,46 @@ if __name__ == "__main__":
 </div>
 
 <!-- ==================== STEP 7 ==================== -->
-<h2 id="step7">အဆင့် ၇ — Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း (ပြင်ဆင်ပြီး)</h2>
+<h2 id="step7">အဆင့် ၇ — BotFather တွင် Commands သတ်မှတ်ခြင်း (English)</h2>
+<div class="info">
+  ဒါက ညီလေး Bot ထဲမှာ `/` နှိပ်လိုက်ရင် Command တွေ ပေါ်လာအောင် BotFather မှာ သတ်မှတ်ပေးတာပါ။
+</div>
+
+<div class="step">
+  <span class="step-num">1</span><strong>BotFather ဆီ သွားပါ</strong>
+  <p>Telegram မှာ <code>@BotFather</code> ကို ဖွင့်ပြီး အောက်ပါ Command ကို ရိုက်ပါ:</p>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Telegram</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre>/setcommands</pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>Bot ကို ရွေးပါ</strong>
+  <p>ညီလေး ဖန်တီးထားတဲ့ Bot နာမည်ကို ရွေးလိုက်ပါ။</p>
+</div>
+
+<div class="step">
+  <span class="step-num">3</span><strong>Commands စာရင်းကို အောက်ပါအတိုင်း Copy ကူးပြီး ပို့ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>BotFather Commands</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre>start - Start the bot and show help
+help - Show available commands
+list - View all available VPN config names
+zip - Download all configs as a ZIP file
+get - Get a single config file (e.g. /get SIAM VPN)
+check - Check bot status</pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 8 ==================== -->
+<h2 id="step8">အဆင့် ၈ — Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း</h2>
 <div class="step">
   <span class="step-num">1</span><strong>Service ဖိုင် ဖန်တီးပါ</strong>
   <div class="code-block">
@@ -587,7 +645,7 @@ if __name__ == "__main__":
     <pre>nano /etc/systemd/system/xdbot.service</pre>
   </div>
   
-  <div class="comment-text"># အောက်က ကုဒ်ကို ထည့်ပါ (syslog obsolete warning မတက်အောင် ဖြုတ်ထားပါတယ်)</div>
+  <div class="comment-text"># အောက်က ကုဒ်ကို ထည့်ပါ</div>
   <div class="code-block">
     <div class="code-header">
       <span>xdbot.service</span>
@@ -612,78 +670,37 @@ WantedBy=multi-user.target</pre>
 
 <div class="step">
   <span class="step-num">2</span><strong>Service ကို စတင် Run ပါ</strong>
-  <div class="comment-text"># Systemd ကို အသစ်ဖန်တီးထားတဲ့ service ဖိုင်ကို ဖတ်ခိုင်းပါ</div>
   <div class="code-block">
     <div class="code-header">
       <span>Terminal</span>
       <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
     </div>
-    <pre>systemctl daemon-reload</pre>
-  </div>
-
-  <div class="comment-text"># Bot ကို စတင်ပါ</div>
-  <div class="code-block">
-    <div class="code-header">
-      <span>Terminal</span>
-      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-    </div>
-    <pre>systemctl start xdbot</pre>
-  </div>
-
-  <div class="comment-text"># VPS တက်တိုင်း Bot အလိုအလျောက် တက်လာအောင် သတ်မှတ်ပါ</div>
-  <div class="code-block">
-    <div class="code-header">
-      <span>Terminal</span>
-      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-    </div>
-    <pre>systemctl enable xdbot</pre>
-  </div>
-</div>
-
-<!-- ==================== STEP 8 ==================== -->
-<h2 id="step8">အဆင့် ၈ — အဆင့်မြင့် Commands များ (ဖွင့်/ပိတ်/ပြန်စ)</h2>
-<div class="step">
-  <span class="step-num">1</span><strong>Bot ရဲ့ အခြေအနေ (Status) ကြည့်ရန်</strong>
-  <div class="code-block">
-    <div class="code-header">
-      <span>Terminal</span>
-      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-    </div>
-    <pre>systemctl status xdbot</pre>
+    <pre>systemctl daemon-reload
+systemctl start xdbot
+systemctl enable xdbot</pre>
   </div>
 </div>
 
 <div class="step">
-  <span class="step-num">2</span><strong>Bot ကို ရပ်ချင်ရင် (Stop)</strong>
-  <div class="code-block">
-    <div class="code-header">
-      <span>Terminal</span>
-      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-    </div>
-    <pre>systemctl stop xdbot</pre>
-  </div>
-</div>
-
-<div class="step">
-  <span class="step-num">3</span><strong>Bot ကို ပြန်စချင်ရင် (Restart)</strong>
-  <div class="code-block">
-    <div class="code-header">
-      <span>Terminal</span>
-      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-    </div>
-    <pre>systemctl restart xdbot</pre>
-  </div>
-</div>
-
-<div class="step">
-  <span class="step-num">4</span><strong>Bot ရဲ့ Error Log တွေ ကြည့်ချင်ရင်</strong>
-  <div class="code-block">
-    <div class="code-header">
-      <span>Terminal</span>
-      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-    </div>
-    <pre>journalctl -u xdbot -f</pre>
-  </div>
+  <span class="step-num">3</span><strong>Commands အသုံးပြုရန်</strong>
+  <table>
+    <tr>
+      <th>Command</th>
+      <th>ဘာလုပ်ပေးလဲ</th>
+    </tr>
+    <tr>
+      <td><code>systemctl restart xdbot</code></td>
+      <td>Bot ကို ပြန်စရန်</td>
+    </tr>
+    <tr>
+      <td><code>systemctl stop xdbot</code></td>
+      <td>Bot ကို ရပ်ရန်</td>
+    </tr>
+    <tr>
+      <td><code>journalctl -u xdbot -f</code></td>
+      <td>Error Log ကြည့်ရန်</td>
+    </tr>
+  </table>
 </div>
 
 <footer>
