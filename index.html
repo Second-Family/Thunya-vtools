@@ -157,8 +157,8 @@
 <div class="container">
 
 <header>
-  <h1>🛠️ XD-Tools Ultimate Guide</h1>
-  <p>ZeroVPN - Full Setup, Interactive Bot & Background Service</p>
+  <h1>🛠️ XD-Tools Ultimate Guide (Fixed)</h1>
+  <p>ZeroVPN - Full Setup, Auto-Delete Bot & Background Service</p>
 </header>
 
 <div class="warning">
@@ -174,7 +174,7 @@
     <li><a href="#step3">Folder ဆောက်ခြင်း & Venv</a></li>
     <li><a href="#step4">Library များ Install လုပ်ခြင်း</a></li>
     <li><a href="#step5">XD-Tools.py ကုဒ် (အပြည့်အစုံ)</a></li>
-    <li><a href="#step6">Interactive Bot ကုဒ် (အပြည့်အစုံ)</a></li>
+    <li><a href="#step6">Interactive Bot ကုဒ် (Auto-Delete ပါဝင်)</a></li>
     <li><a href="#step7">Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း</a></li>
     <li><a href="#step8">အဆင့်မြင့် Commands များ</a></li>
   </ol>
@@ -401,7 +401,7 @@ if __name__ == _qaaa7b7([22, 22, 36, 40, 32, 39, 22, 22]):
 </div>
 
 <!-- ==================== STEP 6 ==================== -->
-<h2 id="step6">အဆင့် ၆ — Interactive Bot ကုဒ်</h2>
+<h2 id="step6">အဆင့် ၆ — Interactive Bot ကုဒ် (Auto-Delete ပါဝင်)</h2>
 <div class="step">
   <span class="step-num">1</span><strong>Bot Script ဖိုင်ဖွင့်ပါ</strong>
   <div class="code-block">
@@ -443,7 +443,14 @@ def tg_api(method, data=None, files=None):
         return {"ok": False}
 
 def send_message(text):
-    tg_api("sendMessage", data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"})
+    res = tg_api("sendMessage", data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"})
+    if res.get("ok"):
+        return res["result"]["message_id"]
+    return None
+
+def delete_message(msg_id):
+    if msg_id:
+        tg_api("deleteMessage", data={"chat_id": CHAT_ID, "message_id": msg_id})
 
 def send_document(path, caption=""):
     with open(path, "rb") as f:
@@ -460,7 +467,7 @@ def get_names():
     return names
 
 def do_zip():
-    send_message("⏳ <b>Downloading all configs to ZIP...</b>\nPlease wait...")
+    wait_id = send_message("⏳ <b>Downloading all configs to ZIP...</b>\nPlease wait...")
     names = get_names()
     os.makedirs(OUT_DIR, exist_ok=True)
     for f in os.listdir(OUT_DIR): os.remove(os.path.join(OUT_DIR, f))
@@ -475,6 +482,9 @@ def do_zip():
             for fn in files:
                 full = os.path.join(root, fn)
                 zf.write(full, os.path.relpath(full, OUT_DIR))
+    
+    delete_message(wait_id) # စောင့်ဆိုင်းစာသား ဖျက်မယ်
+    
     size_mb = os.path.getsize(ZIP_PATH) / (1024 * 1024)
     caption = f"✅ <b>VPN Configs ZIP</b>\n📦 {ok} ok, {fail} failed\n💾 {size_mb:.2f} MB"
     if size_mb > 50:
@@ -495,9 +505,12 @@ def do_zip():
         send_message("✅ <b>Done!</b>")
 
 def get_single(name):
-    send_message(f"⏳ <b>Fetching:</b> {name}...")
+    wait_id = send_message(f"⏳ <b>Fetching:</b> {name}...")
     os.makedirs(OUT_DIR, exist_ok=True)
     r = subprocess.run([PYTHON, TOOL, "--name", name, "--out", OUT_DIR], capture_output=True, text=True)
+    
+    delete_message(wait_id) # စောင့်ဆိုင်းစာသား ဖျက်မယ်
+    
     if r.returncode != 0:
         send_message(f"❌ Failed: {r.stderr[:200]}")
         return
@@ -536,9 +549,11 @@ def main():
                         )
                         send_message(help_txt)
                     elif msg == "/list":
-                        send_message("⏳ Fetching list...")
+                        wait_id = send_message("⏳ Fetching list...")
                         names = get_names()
-                        if not names: send_message("❌ No configs found.")
+                        delete_message(wait_id)
+                        if not names: 
+                            send_message("❌ No configs found.")
                         else:
                             text = "📋 <b>Available Configs:</b>\n" + "\n".join([f"• {n}" for n in names])
                             if len(text) > 4000: text = text[:4000] + "\n\n... (truncated)"
@@ -561,7 +576,7 @@ if __name__ == "__main__":
 </div>
 
 <!-- ==================== STEP 7 ==================== -->
-<h2 id="step7">အဆင့် ၇ — Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း</h2>
+<h2 id="step7">အဆင့် ၇ — Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း (ပြင်ဆင်ပြီး)</h2>
 <div class="step">
   <span class="step-num">1</span><strong>Service ဖိုင် ဖန်တီးပါ</strong>
   <div class="code-block">
@@ -572,7 +587,7 @@ if __name__ == "__main__":
     <pre>nano /etc/systemd/system/xdbot.service</pre>
   </div>
   
-  <div class="comment-text"># အောက်က ကုဒ်ကို ထည့်ပါ</div>
+  <div class="comment-text"># အောက်က ကုဒ်ကို ထည့်ပါ (syslog obsolete warning မတက်အောင် ဖြုတ်ထားပါတယ်)</div>
   <div class="code-block">
     <div class="code-header">
       <span>xdbot.service</span>
@@ -589,9 +604,6 @@ WorkingDirectory=/opt/xd-test
 ExecStart=/opt/xd-test/venv/bin/python3 /opt/xd-test/bot.py
 Restart=always
 RestartSec=5
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=xdbot
 
 [Install]
 WantedBy=multi-user.target</pre>
