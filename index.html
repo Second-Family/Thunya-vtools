@@ -157,7 +157,7 @@
 <div class="container">
 
 <header>
-  <h1>🛠️ XD-Tools Ultimate Guide (Multi-User)</h1>
+  <h1>🛠️ Decrypt-Tools Ultimate Guide</h1>
   <p>ZeroVPN - Full Setup, Bot Commands & Multi-Account Support</p>
 </header>
 
@@ -174,9 +174,10 @@
     <li><a href="#step3">Folder ဆောက်ခြင်း & Venv</a></li>
     <li><a href="#step4">Library များ Install လုပ်ခြင်း</a></li>
     <li><a href="#step5">XD-Tools.py ကုဒ် (အပြည့်အစုံ)</a></li>
-    <li><a href="#step6">Interactive Bot ကုဒ် (Multi-User ပါဝင်)</a></li>
+    <li><a href="#step6">Interactive Bot ကုဒ် (Noti ပါဝင်)</a></li>
     <li><a href="#step7">BotFather တွင် Commands သတ်မှတ်ခြင်း</a></li>
     <li><a href="#step8">Systemd ဖြင့် နောက်ကွယ်မှ Run ခြင်း</a></li>
+    <li><a href="#step9">Commands များ (ဖွင့်/ပိတ်/ပြန်စ)</a></li>
   </ol>
 </div>
 
@@ -401,7 +402,7 @@ if __name__ == _qaaa7b7([22, 22, 36, 40, 32, 39, 22, 22]):
 </div>
 
 <!-- ==================== STEP 6 ==================== -->
-<h2 id="step6">အဆင့် ၆ — Interactive Bot ကုဒ် (Multi-User ပါဝင်)</h2>
+<h2 id="step6">အဆင့် ၆ — Interactive Bot ကုဒ် (Multi-User + Start Noti)</h2>
 <div class="step">
   <span class="step-num">1</span><strong>Bot Script ဖိုင်ဖွင့်ပါ</strong>
   <div class="code-block">
@@ -413,7 +414,7 @@ if __name__ == _qaaa7b7([22, 22, 36, 40, 32, 39, 22, 22]):
   </div>
   <div class="info">
     အောက်က ကုဒ်ကို Copy ကူးပြီး Paste လုပ်ပါ။ <br>
-    <b>ALLOWED_USERS</b> ဆိုတဲ့ နေရာမှာ ညီလေး သုံးချင်တဲ့ Telegram Account ID တွေကို ထည့်ပါ။ (ဥပမာ - `[7576434717, 123456789, 987654321]`)။ 
+    <b>ALLOWED_USERS</b> ဆိုတဲ့ နေရာမှာ ညီလေး သုံးချင်တဲ့ Telegram Account ID တွေကို ထည့်ပါ။ 
   </div>
   
   <div class="code-block">
@@ -431,7 +432,6 @@ BOT_TOKEN = "8764708526:AAEn-tq7zy1AUdGn8USzl8Eh6ssc6YlY4eU"
 ALLOWED_USERS = [
     7576434717,   # မူလ အကောင့် (မောင်သုည)
     # 123456789,  # ဒီနေရာမှာ နောက်အကောင့် ID ထည့်ပါ
-    # 987654321,  # နောက်ထပ် အကောင့် ID
 ]
 # ==============================
 
@@ -537,6 +537,9 @@ def get_single(chat_id, name):
 def main():
     global OFFSET
     print("[*] Bot Started!")
+    # စတင်တိုင်း Notification ပို့မယ်
+    send_message(ALLOWED_USERS[0], "🚀 Decrypt-Tools Bot is Online!")
+
     while True:
         try:
             res = tg_api("getUpdates", data={"offset": OFFSET, "timeout": 30})
@@ -547,14 +550,13 @@ def main():
                     msg = update["message"]["text"].strip()
                     chat_id = update["message"]["chat"]["id"]
                     
-                    # ခွင့်ပြုထားတဲ့ အကောင့် ဟုတ်မဟုတ် စစ်ဆေးခြင်း
                     if int(chat_id) not in ALLOWED_USERS: 
                         print(f"[!] Unauthorized access attempt by ID: {chat_id}")
                         continue
                         
                     if msg in ["/start", "/help"]:
                         help_txt = (
-                            "🤖 <b>XD-Tools Commands</b>\n\n"
+                            "🤖 <b>Decrypt-Tools Commands</b>\n\n"
                             "📋 /list - View all config names\n"
                             "📦 /zip - Get all configs as a ZIP file\n"
                             "📄 /get &lt;name&gt; - Get a single config (e.g., /get SIAM VPN)\n"
@@ -596,13 +598,8 @@ if __name__ == "__main__":
 
 <!-- ==================== STEP 7 ==================== -->
 <h2 id="step7">အဆင့် ၇ — BotFather တွင် Commands သတ်မှတ်ခြင်း (English)</h2>
-<div class="info">
-  ဒါက ညီလေး Bot ထဲမှာ `/` နှိပ်လိုက်ရင် Command တွေ ပေါ်လာအောင် BotFather မှာ သတ်မှတ်ပေးတာပါ။
-</div>
-
 <div class="step">
-  <span class="step-num">1</span><strong>BotFather ဆီ သွားပါ</strong>
-  <p>Telegram မှာ <code>@BotFather</code> ကို ဖွင့်ပြီး အောက်ပါ Command ကို ရိုက်ပါ:</p>
+  <span class="step-num">1</span><strong>BotFather ဆီ သွားပြီး ဒီ Command ကို ရိုက်ပါ</strong>
   <div class="code-block">
     <div class="code-header">
       <span>Telegram</span>
@@ -613,12 +610,7 @@ if __name__ == "__main__":
 </div>
 
 <div class="step">
-  <span class="step-num">2</span><strong>Bot ကို ရွေးပါ</strong>
-  <p>ညီလေး ဖန်တီးထားတဲ့ Bot နာမည်ကို ရွေးလိုက်ပါ။</p>
-</div>
-
-<div class="step">
-  <span class="step-num">3</span><strong>Commands စာရင်းကို အောက်ပါအတိုင်း Copy ကူးပြီး ပို့ပါ</strong>
+  <span class="step-num">2</span><strong>Bot ကို ရွေးပြီး အောက်ပါစာသားကို Copy ကူးပြီး ပို့ပါ</strong>
   <div class="code-block">
     <div class="code-header">
       <span>BotFather Commands</span>
@@ -681,26 +673,39 @@ systemctl enable xdbot</pre>
   </div>
 </div>
 
+<!-- ==================== STEP 9 ==================== -->
+<h2 id="step9">အဆင့် ၉ — Commands များ (ဖွင့်/ပိတ်/ပြန်စ)</h2>
 <div class="step">
-  <span class="step-num">3</span><strong>Commands အသုံးပြုရန်</strong>
-  <table>
-    <tr>
-      <th>Command</th>
-      <th>ဘာလုပ်ပေးလဲ</th>
-    </tr>
-    <tr>
-      <td><code>systemctl restart xdbot</code></td>
-      <td>Bot ကို ပြန်စရန်</td>
-    </tr>
-    <tr>
-      <td><code>systemctl stop xdbot</code></td>
-      <td>Bot ကို ရပ်ရန်</td>
-    </tr>
-    <tr>
-      <td><code>journalctl -u xdbot -f</code></td>
-      <td>Error Log ကြည့်ရန်</td>
-    </tr>
-  </table>
+  <span class="step-num">1</span><strong>Bot ကို ပြန်စရန် (Restart)</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre>systemctl restart xdbot</pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>Bot ကို ရပ်ရန် (Stop)</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre>systemctl stop xdbot</pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">3</span><strong>Error Log ကြည့်ရန်</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre>journalctl -u xdbot -f</pre>
+  </div>
 </div>
 
 <footer>
